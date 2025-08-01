@@ -1,8 +1,11 @@
-// Timings.
-// T = 1 / 8 MHz = 8 us
-// 0 = T-4T low, T-16T high = 8 - 32 us low, 8 - 128 us high 
-// 1 = 6T-64T low, T-16T high = 48 - 512 us low, 8 - 128 us high
-
+// Documentation about bits and timings, see here https://github.com/aappleby/picorvd/blob/master/src/singlewire.pio#L28C1-L31C23
+//
+// We should be able to craft bits with the following timings:
+// 
+// Normal mode:
+// 1    = low 125ns to  500ns, high 125ns to 2000ns
+// 0    = low 750ns to 8000ns, high 125ns to 2000ns
+// Stop = high 2250 ns
 
 const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
 const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (The power pin is really ***OPTIONAL*** I don't even care to connect it)
@@ -17,7 +20,7 @@ void target_power(int x) {
 void swio_send_one() {
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    delayMicroseconds(8);
+    delayMicroseconds(0.250);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
@@ -25,7 +28,7 @@ void swio_send_one() {
 void swio_send_zero() {
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    delayMicroseconds(48);
+    delayMicroseconds(0.750);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
@@ -36,7 +39,7 @@ char swio_recv_bit() {
     digitalWrite(SWIO_PIN, LOW);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
-    delayMicroseconds(2);
+    delayMicroseconds(0.500);
     x = digitalRead(SWIO_PIN);
     // Wait for the line to come back up if it's down.
     while (digitalRead(SWIO_PIN) == LOW);
