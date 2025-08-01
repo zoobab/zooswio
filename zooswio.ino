@@ -1,3 +1,9 @@
+// Timings.
+// T = 1 / 8 MHz = 8 us
+// 0 = T-4T low, T-16T high = 8 - 32 us low, 8 - 128 us high 
+// 1 = 6T-64T low, T-16T high = 48 - 512 us low, 8 - 128 us high
+
+
 const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
 const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (The power pin is really ***OPTIONAL*** I don't even care to connect it)
 
@@ -11,7 +17,7 @@ void target_power(int x) {
 void swio_send_one() {
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    delayMicroseconds(1);
+    delayMicroseconds(8);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
@@ -19,7 +25,7 @@ void swio_send_one() {
 void swio_send_zero() {
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    delayMicroseconds(250);
+    delayMicroseconds(96);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
