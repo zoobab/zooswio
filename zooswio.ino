@@ -25,7 +25,7 @@ void swio_send_one() {
 void swio_send_zero() {
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    delayMicroseconds(96);
+    delayMicroseconds(48);
     digitalWrite(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
