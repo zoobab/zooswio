@@ -1,10 +1,5 @@
-// TODO:
-// 1. add some documentation for the 250ns blocks
-// 2. list of possible values for different boards
-// 3. boards with 3.3v vs 5v, where to power them
-
 const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
-const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (Optional for me, don't care to flash blink)
+const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (The power pin is really ***OPTIONAL*** I don't even care to connect it)
 
 void target_power(int x) {
     if (x)
@@ -175,8 +170,4 @@ void loop() {
       break;
       }
     }
-  // Example usage:
-  //swio_write_reg(0x01, 0x12345678);
-  //uint32_t value = swio_read_reg(0x01);
-  //Serial.println(value, HEX);
 } 
