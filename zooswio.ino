@@ -1,5 +1,10 @@
-const int SWIO_PIN = 8; // Edit your SWIO pin
-const int TARGET_POWER_PIN = 9; // Edit your POWER pin
+// TODO:
+// 1. add some documentation for the 250ns blocks
+// 2. list of possible values for different boards
+// 3. boards with 3.3v vs 5v, where to power them
+
+const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
+const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (Optional for me, don't care to flash blink)
 
 void target_power(int x) {
     if (x)
@@ -9,61 +14,32 @@ void target_power(int x) {
 }
 
 void swio_send_one() {
-    // 0.0T
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    
-    // 1.0T
     delayMicroseconds(1);
-    
-    // 2.0T
     digitalWrite(SWIO_PIN, HIGH);
-    
-    // 3.0T
     pinMode(SWIO_PIN, INPUT);
 }
 
 void swio_send_zero() {
-    // 0.0T
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    
-    // 1.0T
-    delayMicroseconds(1);
-    
-    // 2.0T to 7.0T (8 nops)
-    delayMicroseconds(8);
-    
-    // 8.0T
+    delayMicroseconds(250);
     digitalWrite(SWIO_PIN, HIGH);
-    
-    // 9.0T
     pinMode(SWIO_PIN, INPUT);
 }
 
 char swio_recv_bit() {
     char x;
-    // 0.0T
     pinMode(SWIO_PIN, OUTPUT);
     digitalWrite(SWIO_PIN, LOW);
-    
-    // 1.0T
     digitalWrite(SWIO_PIN, HIGH);
-    
-    // 2.0T
     pinMode(SWIO_PIN, INPUT);
-    
-    // 3.0T to 4.0T (2 nops)
     delayMicroseconds(2);
-    
-    // 5.0T
     x = digitalRead(SWIO_PIN);
-
     // Wait for the line to come back up if it's down.
-    while (digitalRead(SWIO_PIN) == LOW)
-        ;
-
-    return x;
+    while (digitalRead(SWIO_PIN) == LOW);
+        return x;
 }
 
 // Write a register.
@@ -145,18 +121,7 @@ void swio_init() {
     pinMode(SWIO_PIN, INPUT);
 }
 
-void power() {
-    pinMode(SWIO_PIN, OUTPUT);
-    digitalWrite(SWIO_PIN, HIGH);
-    delay(5);
-    digitalWrite(SWIO_PIN, LOW);
-    delay(20);
-    digitalWrite(SWIO_PIN, HIGH);
-    pinMode(SWIO_PIN, INPUT);
-}
-
 void setup() {
-    Serial.begin(115200);
     #define PROTOCOL_START     '!'
     #define PROTOCOL_ACK       '+'
     #define PROTOCOL_TEST      '?'
@@ -164,16 +129,17 @@ void setup() {
     #define PROTOCOL_POWER_OFF 'P'
     #define PROTOCOL_WRITE_REG 'w'
     #define PROTOCOL_READ_REG  'r'
+    Serial.begin(115200);
     swio_init();
-    Serial.println("SWIO flasher ready, waiting for commands...");
+    Serial.println("SWIO flasher ready, looping for commands...");
+    Serial.println(PROTOCOL_START);
 }
 
 void loop() {
     uint8_t reg;
     uint32_t val;
-    
     while (Serial.available() >= 0) {
-    char receivedData = Serial.read();   // read one byte from serial buffer and save to receivedData
+    char receivedData = Serial.read();
     if (receivedData == PROTOCOL_TEST ) {
       Serial.println(PROTOCOL_ACK);
       break;
@@ -189,19 +155,28 @@ void loop() {
       break;
     }
     else if (receivedData == PROTOCOL_WRITE_REG ) {
-      //  reg = Serial.read();
-      //  val = Serial.read() << 24;
-      //  val |= Serial.read() << 16;
-      //  val |= Serial.read() << 8;
-      //  val |= Serial.read();
-        swio_write_reg(0x01, 0x12345678);
-      //  swio_write_reg(reg, val);
+      if (Serial.available() >= sizeof(reg) + sizeof(val)) {
+        reg = Serial.read();
+        val = 0;
+        for (int i = 0; i < sizeof(val); i++) {
+          val |= ((uint32_t)Serial.read()) << (8 * i);
+        }
+        swio_write_reg(reg, val);
         Serial.print(PROTOCOL_ACK);
+        break;
+      }
     }
-    
-  }
+    else if (receivedData == PROTOCOL_READ_REG ) {
+      if (Serial.available() >= sizeof(reg)) {
+        reg = Serial.read();
+        val = swio_read_reg(reg);
+        Serial.write((uint8_t*)&val, sizeof(val));
+      }
+      break;
+      }
+    }
   // Example usage:
   //swio_write_reg(0x01, 0x12345678);
   //uint32_t value = swio_read_reg(0x01);
   //Serial.println(value, HEX);
-}
+} 
