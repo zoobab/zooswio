@@ -12,29 +12,44 @@ const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
 // for AVR only for now you need to install the arduino lib digitalWriteFast
 #include <digitalWriteFast.h>
 
+void delayNanoseconds(uint16_t ns) {
+    // Assuming 1 clock cycle = 1 nop = 1/CLK frequency seconds
+    // For example, at 16 MHz, 1 clock cycle = 1/16,000,000 s = 62.5 ns
+    uint16_t nops = ns / 62.5; // For 16 MHz
+
+    // Adjust nops based on your AVR's clock frequency
+    // For 8 MHz:  ns / 125
+    // For 4 MHz:  ns / 250
+    // For 1 MHz:  ns / 1000
+
+    while (nops--) {
+        asm volatile("nop");
+    }
+}
+
 void swio_send_one() {
-    pinMode(SWIO_PIN, OUTPUT);
+    pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, LOW);
-    delayMicroseconds(0.250);
+    delayNanoseconds(500);
     digitalWriteFast(SWIO_PIN, HIGH);
-    pinMode(SWIO_PIN, INPUT);
+    pinModeFast(SWIO_PIN, INPUT);
 }
 
 void swio_send_zero() {
-    pinMode(SWIO_PIN, OUTPUT);
+    pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, LOW);
-    delayMicroseconds(0.750);
+    delayNanoseconds(750);
     digitalWriteFast(SWIO_PIN, HIGH);
-    pinMode(SWIO_PIN, INPUT);
+    pinModeFast(SWIO_PIN, INPUT);
 }
 
 char swio_recv_bit() {
     char x;
-    pinMode(SWIO_PIN, OUTPUT);
+    pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, LOW);
     digitalWriteFast(SWIO_PIN, HIGH);
-    pinMode(SWIO_PIN, INPUT);
-    delayMicroseconds(0.500);
+    pinModeFast(SWIO_PIN, INPUT);
+    delayNanoseconds(500);
     x = digitalReadFast(SWIO_PIN);
     // Wait for the line to come back up if it's down.
     while (digitalReadFast(SWIO_PIN) == LOW);
@@ -72,7 +87,7 @@ void swio_write_reg(uint8_t addr, uint32_t val) {
     }
 
     // Stop bit.
-    delayMicroseconds(10);
+    delayNanoseconds(2250);
 }
 
 // Read a register.
@@ -105,19 +120,19 @@ uint32_t swio_read_reg(uint8_t addr) {
     }
 
     // Stop bit.
-    delayMicroseconds(10);
+    delayNanoseconds(2250);
 
     return x;
 }
 
 void swio_init() {
-    pinMode(SWIO_PIN, OUTPUT);
+    pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, HIGH);
     delay(5);
     digitalWriteFast(SWIO_PIN, LOW);
     delay(20);
     digitalWriteFast(SWIO_PIN, HIGH);
-    pinMode(SWIO_PIN, INPUT);
+    pinModeFast(SWIO_PIN, INPUT);
 }
 
 void setup() {
