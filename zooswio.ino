@@ -8,41 +8,36 @@
 // Stop = high 2250 ns
 
 const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
-const int TARGET_POWER_PIN = 9; // Edit your POWER pin (depending on your board) (The power pin is really ***OPTIONAL*** I don't even care to connect it)
 
-void target_power(int x) {
-    if (x)
-        digitalWrite(TARGET_POWER_PIN, HIGH);
-    else
-        digitalWrite(TARGET_POWER_PIN, LOW);
-}
+// for AVR only for now you need to install the arduino lib digitalWriteFast
+#include <digitalWriteFast.h>
 
 void swio_send_one() {
     pinMode(SWIO_PIN, OUTPUT);
-    digitalWrite(SWIO_PIN, LOW);
+    digitalWriteFast(SWIO_PIN, LOW);
     delayMicroseconds(0.250);
-    digitalWrite(SWIO_PIN, HIGH);
+    digitalWriteFast(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
 
 void swio_send_zero() {
     pinMode(SWIO_PIN, OUTPUT);
-    digitalWrite(SWIO_PIN, LOW);
+    digitalWriteFast(SWIO_PIN, LOW);
     delayMicroseconds(0.750);
-    digitalWrite(SWIO_PIN, HIGH);
+    digitalWriteFast(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
 
 char swio_recv_bit() {
     char x;
     pinMode(SWIO_PIN, OUTPUT);
-    digitalWrite(SWIO_PIN, LOW);
-    digitalWrite(SWIO_PIN, HIGH);
+    digitalWriteFast(SWIO_PIN, LOW);
+    digitalWriteFast(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
     delayMicroseconds(0.500);
-    x = digitalRead(SWIO_PIN);
+    x = digitalReadFast(SWIO_PIN);
     // Wait for the line to come back up if it's down.
-    while (digitalRead(SWIO_PIN) == LOW);
+    while (digitalReadFast(SWIO_PIN) == LOW);
         return x;
 }
 
@@ -117,11 +112,11 @@ uint32_t swio_read_reg(uint8_t addr) {
 
 void swio_init() {
     pinMode(SWIO_PIN, OUTPUT);
-    digitalWrite(SWIO_PIN, HIGH);
+    digitalWriteFast(SWIO_PIN, HIGH);
     delay(5);
-    digitalWrite(SWIO_PIN, LOW);
+    digitalWriteFast(SWIO_PIN, LOW);
     delay(20);
-    digitalWrite(SWIO_PIN, HIGH);
+    digitalWriteFast(SWIO_PIN, HIGH);
     pinMode(SWIO_PIN, INPUT);
 }
 
@@ -135,7 +130,7 @@ void setup() {
     #define PROTOCOL_READ_REG  'r'
     Serial.begin(115200);
     swio_init();
-    Serial.println("SWIO flasher ready, looping for commands...");
+    Serial.println("SWIO flasher ready, waiting for commands...");
     Serial.println(PROTOCOL_START);
 }
 
@@ -145,16 +140,6 @@ void loop() {
     while (Serial.available() >= 0) {
     char receivedData = Serial.read();
     if (receivedData == PROTOCOL_TEST ) {
-      Serial.println(PROTOCOL_ACK);
-      break;
-    }
-    else if (receivedData == PROTOCOL_POWER_ON ) {
-      target_power(1);
-      Serial.println(PROTOCOL_ACK);
-      break;
-    }
-    else if (receivedData == PROTOCOL_POWER_OFF ) {
-      target_power(0);
       Serial.println(PROTOCOL_ACK);
       break;
     }
