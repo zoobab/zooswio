@@ -1,7 +1,7 @@
 About
 =====
 
-A re-implementation of a BlueSyncLine's ch32v003 arduino flasher in pure
+(WARNING WIP) A re-implementation of a BlueSyncLine's ch32v003 arduino flasher in pure
 Arduino INO, without any AVR assembler specific to a particular platform.
 
 Tested microcontrollers
