@@ -19,6 +19,7 @@ Edit the first 2 lines to change the pin if if does not work for your board.
 Todo
 ====
 
+0. Document how to install arduino-cli
 1. Document a little bit more the protocol (250ns blocks)
 2. example register to validate we can communicate with the ch32v003 (which one?)
 3. Document Arduino cli compilation and flashing (no IDE)
