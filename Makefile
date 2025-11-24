@@ -18,11 +18,13 @@ BUILD_DIR = build
 LIBRARY = digitalWriteFast
 
 # Default target
-all: libinstall build upload
+all: lib build upload
 
 # Check if the library is installed
-libinstall:
-	@echo "==== Installing library $(LIBRARY) ... ===="
+lib:
+	@echo "=================================================================="
+	@echo "Installing library $(LIBRARY) ..."
+	@echo "=================================================================="
 	$(ARDUINO_CLI) lib install $(LIBRARY)
 #	@if ! $(ARDUINO_CLI) lib is-installed $(LIBRARY); then \
 		echo "Installing $(LIBRARY) library..."; \
@@ -31,16 +33,20 @@ libinstall:
 
 # Build target
 build: $(SKETCH)
-	@echo "==== Compiling $(SKETCH) ... ===="
+	@echo "=================================================================="
+	@echo "Compiling $(SKETCH) ..."
+	@echo "=================================================================="
 	$(ARDUINO_CLI) compile --fqbn $(BOARD) --build-path $(BUILD_DIR) $(SKETCH)
 
 # Upload target
 upload:
-	@echo "==== Flashing $(SKETCH) ... ===="
+	@echo "=================================================================="
+	@echo "Flashing $(SKETCH) ..."
+	@echo "=================================================================="
 	$(ARDUINO_CLI) upload -p $(PORT) --fqbn $(BOARD) $(SKETCH)
 
 # Clean target
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all libinstall build upload clean
+.PHONY: all lib build upload clean
