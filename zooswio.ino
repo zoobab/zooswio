@@ -22,6 +22,7 @@ void delayNanoseconds(uint16_t ns) {
         asm volatile("nop");
     }
 }
+
 void swio_send_one() {
     pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, LOW);
