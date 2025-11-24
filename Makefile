@@ -41,6 +41,9 @@ upload:
 	@echo "Flashing $(SKETCH) ..."
 	@echo "=================================================================="
 	$(ARDUINO_CLI) upload -v -p $(PORT) --fqbn $(BOARD) --input-dir $(BUILD_DIR) $(SKETCH)
+	@echo "=================================================================="
+	@echo "The end!"
+	@echo "=================================================================="
 
 # Clean target
 clean:
