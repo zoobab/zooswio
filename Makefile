@@ -26,10 +26,6 @@ lib:
 	@echo "Installing library $(LIBRARY) ..."
 	@echo "=================================================================="
 	$(ARDUINO_CLI) lib install $(LIBRARY)
-#	@if ! $(ARDUINO_CLI) lib is-installed $(LIBRARY); then \
-		echo "Installing $(LIBRARY) library..."; \
-		$(ARDUINO_CLI) lib install $(LIBRARY); \
-	fi
 
 # Build target
 build: $(SKETCH)
