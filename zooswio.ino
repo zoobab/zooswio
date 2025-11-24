@@ -13,20 +13,15 @@ const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
 #include <digitalWriteFast.h>
 
 void delayNanoseconds(uint16_t ns) {
-    // Assuming 1 clock cycle = 1 nop = 1/CLK frequency seconds
-    // For example, at 16 MHz, 1 clock cycle = 1/16,000,000 s = 62.5 ns
-    uint16_t nops = ns / 62.5; // For 16 MHz
+    // Convert nanoseconds to clock cycles
+    // F_CPU is the clock frequency in Hz, so divide by 1 billion (1e9) to get cycles
+    uint16_t nops = (ns * F_CPU) / 1000000000UL;
 
-    // Adjust nops based on your AVR's clock frequency
-    // For 8 MHz:  ns / 125
-    // For 4 MHz:  ns / 250
-    // For 1 MHz:  ns / 1000
-
+    // Use 'nop' instructions to create the delay
     while (nops--) {
         asm volatile("nop");
     }
 }
-
 void swio_send_one() {
     pinModeFast(SWIO_PIN, OUTPUT);
     digitalWriteFast(SWIO_PIN, LOW);
@@ -145,7 +140,6 @@ void setup() {
     #define PROTOCOL_READ_REG  'r'
     Serial.begin(115200);
     swio_init();
-    Serial.println("SWIO flasher ready, waiting for commands...");
     Serial.println(PROTOCOL_START);
 }
 

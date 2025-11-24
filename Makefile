@@ -5,7 +5,7 @@
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-BOARD = arduino:avr:uno  # Change this to your Arduino board type
+BOARD = arduino:avr:diecimila  # Change this to your Arduino board type
 PORT = /dev/ttyUSB0      # Change this to your connected port
 
 # Specify your sketch name
@@ -43,7 +43,7 @@ upload:
 	@echo "=================================================================="
 	@echo "Flashing $(SKETCH) ..."
 	@echo "=================================================================="
-	$(ARDUINO_CLI) upload -p $(PORT) --fqbn $(BOARD) $(SKETCH)
+	$(ARDUINO_CLI) upload -p $(PORT) --fqbn $(BOARD) --input-dir $(BUILD_DIR) $(SKETCH)
 
 # Clean target
 clean:
