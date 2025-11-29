@@ -1,0 +1,9 @@
+{
+  "additionalFiles": "../..",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "arduino:avr:uno",
+  "hardwareFolders": "/home/zoobab/.arduino15/packages",
+  "otherLibrariesFolders": "/home/zoobab/Arduino/libraries",
+  "sketchLocation": "/home/zoobab/soft/zooswio"
+}
