@@ -7,7 +7,7 @@ Arduino INO, with less assembler specific to a particular platform.
 Status
 ======
 
-It is detecting now the chip, but sometimes unstable:
+It is detecting now the chip, but sometimes unstable (see this issue https://github.com/cnlohr/ch32fun/issues/629):
 
 ```
 + ../../ch32fun//../minichlink/minichlink -C ardulink -c /dev/ttyACM0 -i
