@@ -1,58 +1,66 @@
-// Documentation about bits and timings, see here https://github.com/aappleby/picorvd/blob/master/src/singlewire.pio#L28C1-L31C23
-//
-// We should be able to craft bits with the following timings:
-// 
-// Normal mode:
-// 1    = low 125ns to  500ns, high 125ns to 2000ns
-// 0    = low 750ns to 8000ns, high 125ns to 2000ns
-// Stop = high 2250 ns
+// CH32V003 SWIO Programmer for Arduino
+// Converted from AVR C implementation
 
-const int SWIO_PIN = 8; // Edit your SWIO pin (depending on your board)
+#include <Arduino.h>
 
-// for AVR only for now you need to install the arduino lib digitalWriteFast
-#include <digitalWriteFast.h>
+// Pin definitions
+#define SWIO_PIN_NUM 8        // Arduino digital pin 8 (PB0 on ATmega328P)
+#define TARGET_POWER_PIN 9    // Arduino digital pin 9 (PB1 on ATmega328P)
 
-void delayNanoseconds(uint16_t ns) {
-    // Convert nanoseconds to clock cycles
-    // F_CPU is the clock frequency in Hz, so divide by 1 billion (1e9) to get cycles
-    uint16_t nops = (ns * F_CPU) / 1000000000UL;
+// Direct port access for timing-critical SWIO operations
+#define SWIO_DDR  DDRB
+#define SWIO_PORT PORTB
+#define SWIO_PIN  PINB
+#define SWIO_BIT  0           // PB0
 
-    // Use 'nop' instructions to create the delay
-    while (nops--) {
-        asm volatile("nop");
-    }
+// Protocol commands
+#define PROTOCOL_START     '!'
+#define PROTOCOL_ACK       '+'
+#define PROTOCOL_TEST      '?'
+#define PROTOCOL_POWER_ON  'p'
+#define PROTOCOL_POWER_OFF 'P'
+#define PROTOCOL_WRITE_REG 'w'
+#define PROTOCOL_READ_REG  'r'
+
+// SWIO Functions
+static inline void swio_send_one() {
+    /* 0.0T */ SWIO_DDR |= _BV(SWIO_BIT);
+    /* 1.0T */ SWIO_PORT &= ~_BV(SWIO_BIT);
+    /* 2.0T */ asm("nop"); asm("nop");
+    /* 3.0T */ SWIO_PORT |= _BV(SWIO_BIT);
+    /* 4.0T */ SWIO_DDR &= ~_BV(SWIO_BIT);
 }
 
-void swio_send_one() {
-    pinModeFast(SWIO_PIN, OUTPUT);
-    digitalWriteFast(SWIO_PIN, LOW);
-    delayNanoseconds(500);
-    digitalWriteFast(SWIO_PIN, HIGH);
-    pinModeFast(SWIO_PIN, INPUT);
+static inline void swio_send_zero() {
+    /* 0.0T */ SWIO_DDR |= _BV(SWIO_BIT);
+    /* 1.0T */ SWIO_PORT &= ~_BV(SWIO_BIT);
+    /* 2.0T */ asm("nop"); asm("nop");
+    /* 3.0T */ asm("nop"); asm("nop");
+    /* 4.0T */ asm("nop"); asm("nop");
+    /* 5.0T */ asm("nop"); asm("nop");
+    /* 6.0T */ asm("nop"); asm("nop");
+    /* 7.0T */ asm("nop"); asm("nop");
+    /* 8.0T */ SWIO_PORT |= _BV(SWIO_BIT);
+    /* 9.0T */ SWIO_DDR &= ~_BV(SWIO_BIT);
 }
 
-void swio_send_zero() {
-    pinModeFast(SWIO_PIN, OUTPUT);
-    digitalWriteFast(SWIO_PIN, LOW);
-    delayNanoseconds(750);
-    digitalWriteFast(SWIO_PIN, HIGH);
-    pinModeFast(SWIO_PIN, INPUT);
-}
-
-char swio_recv_bit() {
+static inline char swio_recv_bit() {
     char x;
-    pinModeFast(SWIO_PIN, OUTPUT);
-    digitalWriteFast(SWIO_PIN, LOW);
-    digitalWriteFast(SWIO_PIN, HIGH);
-    pinModeFast(SWIO_PIN, INPUT);
-    delayNanoseconds(500);
-    x = digitalReadFast(SWIO_PIN);
+    /* 0.0T */ SWIO_DDR |= _BV(SWIO_BIT);
+    /* 1.0T */ SWIO_PORT &= ~_BV(SWIO_BIT);
+    /* 2.0T */ SWIO_PORT |= _BV(SWIO_BIT); // Precharge when the line is floating.
+    /* 3.0T */ SWIO_DDR &= ~_BV(SWIO_BIT);
+    /* 4.0T */ asm("nop"); asm("nop");
+    /* 5.0T */ asm("nop"); asm("nop");
+    /* 6.0T */ x = SWIO_PIN;
+
     // Wait for the line to come back up if it's down.
-    while (digitalReadFast(SWIO_PIN) == LOW);
-        return x;
+    while (!(SWIO_PIN & _BV(SWIO_BIT)))
+        ;
+
+    return x & _BV(SWIO_BIT);
 }
 
-// Write a register.
 void swio_write_reg(uint8_t addr, uint32_t val) {
     char i;
 
@@ -83,10 +91,9 @@ void swio_write_reg(uint8_t addr, uint32_t val) {
     }
 
     // Stop bit.
-    delayNanoseconds(2250);
+    delayMicroseconds(10);
 }
 
-// Read a register.
 uint32_t swio_read_reg(uint8_t addr) {
     char i;
     uint32_t x = 0;
@@ -116,62 +123,82 @@ uint32_t swio_read_reg(uint8_t addr) {
     }
 
     // Stop bit.
-    delayNanoseconds(2250);
+    delayMicroseconds(10);
 
     return x;
 }
 
 void swio_init() {
-    pinModeFast(SWIO_PIN, OUTPUT);
-    digitalWriteFast(SWIO_PIN, HIGH);
+    SWIO_PORT |= _BV(SWIO_BIT);
+    SWIO_DDR |= _BV(SWIO_BIT);
     delay(5);
-    digitalWriteFast(SWIO_PIN, LOW);
+    SWIO_PORT &= ~_BV(SWIO_BIT);
     delay(20);
-    digitalWriteFast(SWIO_PIN, HIGH);
-    pinModeFast(SWIO_PIN, INPUT);
+    SWIO_PORT |= _BV(SWIO_BIT);
+    SWIO_DDR &= ~_BV(SWIO_BIT);
+}
+
+void target_power(int x) {
+    digitalWrite(TARGET_POWER_PIN, x ? HIGH : LOW);
 }
 
 void setup() {
-    #define PROTOCOL_START     '!'
-    #define PROTOCOL_ACK       '+'
-    #define PROTOCOL_TEST      '?'
-    #define PROTOCOL_POWER_ON  'p'
-    #define PROTOCOL_POWER_OFF 'P'
-    #define PROTOCOL_WRITE_REG 'w'
-    #define PROTOCOL_READ_REG  'r'
+    // Initialize serial communication
     Serial.begin(115200);
+    
+    // Configure target power pin
+    pinMode(TARGET_POWER_PIN, OUTPUT);
+    digitalWrite(TARGET_POWER_PIN, LOW);
+    
+    // Initialize SWIO
     swio_init();
-    Serial.println(PROTOCOL_START);
+    
+    // Send start character
+    Serial.write(PROTOCOL_START);
 }
 
 void loop() {
-    uint8_t reg;
-    uint32_t val;
-    while (Serial.available() >= 0) {
-    char receivedData = Serial.read();
-    if (receivedData == PROTOCOL_TEST ) {
-      Serial.println(PROTOCOL_ACK);
-      break;
-    }
-    else if (receivedData == PROTOCOL_WRITE_REG ) {
-      if (Serial.available() >= sizeof(reg) + sizeof(val)) {
-        reg = Serial.read();
-        val = 0;
-        for (int i = 0; i < sizeof(val); i++) {
-          val |= ((uint32_t)Serial.read()) << (8 * i);
+    if (Serial.available() > 0) {
+        char cmd = Serial.read();
+        uint8_t reg;
+        uint32_t val;
+        
+        switch (cmd) {
+            case PROTOCOL_TEST:
+                Serial.write(PROTOCOL_ACK);
+                break;
+                
+            case PROTOCOL_POWER_ON:
+                target_power(1);
+                Serial.write(PROTOCOL_ACK);
+                break;
+                
+            case PROTOCOL_POWER_OFF:
+                target_power(0);
+                Serial.write(PROTOCOL_ACK);
+                break;
+                
+            case PROTOCOL_WRITE_REG:
+                // Wait for register address
+                while (Serial.available() < 1);
+                Serial.readBytes((char*)&reg, sizeof(uint8_t));
+                
+                // Wait for value
+                while (Serial.available() < 4);
+                Serial.readBytes((char*)&val, sizeof(uint32_t));
+                
+                swio_write_reg(reg, val);
+                Serial.write(PROTOCOL_ACK);
+                break;
+                
+            case PROTOCOL_READ_REG:
+                // Wait for register address
+                while (Serial.available() < 1);
+                Serial.readBytes((char*)&reg, sizeof(uint8_t));
+                
+                val = swio_read_reg(reg);
+                Serial.write((uint8_t*)&val, sizeof(uint32_t));
+                break;
         }
-        swio_write_reg(reg, val);
-        Serial.print(PROTOCOL_ACK);
-        break;
-      }
     }
-    else if (receivedData == PROTOCOL_READ_REG ) {
-      if (Serial.available() >= sizeof(reg)) {
-        reg = Serial.read();
-        val = swio_read_reg(reg);
-        Serial.write((uint8_t*)&val, sizeof(val));
-      }
-      break;
-      }
-    }
-} 
+}
