@@ -5,9 +5,9 @@
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-BOARD = arduino:avr:diecimila  # Change this to your Arduino board type
+BOARD = arduino:avr:uno  # Change this to your Arduino board type
 #BOARD = esp8266:esp8266:d1_mini  # Change this to your Arduino board type
-PORT = /dev/ttyUSB0            # Change this to your connected port
+PORT = /dev/ttyACM0            # Change this to your connected port
 
 # Specify your sketch name
 SKETCH = zooswio.ino
