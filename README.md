@@ -28,8 +28,7 @@ R32_ESIG_UNIID1: 08d7abcd
 R32_ESIG_UNIID2: 710dbc69
 R32_ESIG_UNIID3: 00050000
 ```
-But sometimes it throws an error ```Fault on op (DMABSTRACTS = 08000302) (100) (Exception executing Abstract Command) DMSTATUS: 004c0382
-```:
+But sometimes it throws an error ```Fault on op (DMABSTRACTS = 08000302) (100) (Exception executing Abstract Command) DMSTATUS: 004c0382```:
 
 ```
 $ ./info.sh 
