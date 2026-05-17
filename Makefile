@@ -5,9 +5,9 @@
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-BOARD = arduino:avr:uno  # Change this to your Arduino board type
-#BOARD = esp8266:esp8266:d1_mini  # Change this to your Arduino board type
-PORT = /dev/ttyACM0            # Change this to your connected port
+BOARD = esp8266:esp8266:d1_mini  # ESP8266 board (Wemos D1 mini)
+#BOARD = arduino:avr:uno         # AVR alternative
+PORT = /dev/ttyUSB0              # Change this to your connected port
 
 # Specify your sketch name
 SKETCH = zooswio.ino
@@ -15,23 +15,13 @@ SKETCH = zooswio.ino
 # Build directory
 BUILD_DIR = build
 
-# Library to check and install
-LIBRARY = digitalWriteFast
-
 # Default target
-all: lib build upload
-
-# Check if the library is installed
-lib:
-	@echo "=================================================================="
-	@echo "Installing library $(LIBRARY) ..."
-	@echo "=================================================================="
-	$(ARDUINO_CLI) lib install $(LIBRARY)
+all: build upload
 
 # Build target
 build: $(SKETCH)
 	@echo "=================================================================="
-	@echo "Compiling $(SKETCH) ..."
+	@echo "Compiling $(SKETCH) for $(BOARD) ..."
 	@echo "=================================================================="
 	$(ARDUINO_CLI) compile --fqbn $(BOARD) --build-path $(BUILD_DIR) $(SKETCH)
 
@@ -49,4 +39,4 @@ upload:
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all lib build upload clean
+.PHONY: all build upload clean
