@@ -2,7 +2,7 @@
   "additionalFiles": "../..",
   "compiler.optimization_flags": "",
   "customBuildProperties": "",
-  "fqbn": "arduino:avr:uno",
+  "fqbn": "esp8266:esp8266:d1_mini",
   "hardwareFolders": "/home/zoobab/.arduino15/packages",
   "otherLibrariesFolders": "/home/zoobab/Arduino/libraries",
   "sketchLocation": "/home/zoobab/soft/zooswio"
