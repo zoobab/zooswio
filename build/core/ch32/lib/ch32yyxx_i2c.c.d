@@ -1,0 +1,26 @@
+/home/zoobab/soft/zooswio/build/core/ch32/lib/ch32yyxx_i2c.c.o: \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/cores/arduino/ch32/lib/ch32yyxx_i2c.c \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/src/ch32v00x_i2c.c \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_i2c.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Core/core_riscv.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/USER/system_ch32v00x.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/USER/ch32v00x_conf.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_adc.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_dbgmcu.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_dma.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_exti.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_flash.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_gpio.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/USER/ch32v00x_it.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Debug/debug.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_iwdg.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_misc.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_pwr.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_rcc.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_spi.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_tim.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_usart.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_wwdg.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x_opa.h \
+ /home/zoobab/.arduino15/packages/WCH/hardware/ch32v/1.0.4/system/CH32V00x/SRC/Peripheral/inc/ch32v00x.h

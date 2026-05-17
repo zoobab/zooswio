@@ -7,7 +7,7 @@
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-BOARD = rp2040:rp2040:generic
+BOARD = WCH:ch32v:CH32V00x_EVT
 #BOARD = rp2040:rp2040:rp2040    # generic RP2040
 #BOARD = rp2040:rp2040:adafruit-feather-rp2040
 PORT = /dev/ttyACM0            # Change this to your connected port
