@@ -5,7 +5,8 @@
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-BOARD = arduino:avr:uno  # Change this to your Arduino board type
+#BOARD = arduino:avr:uno  # Change this to your Arduino board type
+BOARD = esp32:esp32:esp32	# Change this to your Arduino board type
 #BOARD = esp8266:esp8266:d1_mini  # Change this to your Arduino board type
 PORT = /dev/ttyACM0            # Change this to your connected port
 
@@ -19,7 +20,7 @@ BUILD_DIR = build
 LIBRARY = digitalWriteFast
 
 # Default target
-all: lib build upload
+all: build upload
 
 # Check if the library is installed
 lib:
@@ -49,4 +50,4 @@ upload:
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all lib build upload clean
+.PHONY: all build upload clean

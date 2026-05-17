@@ -5,10 +5,58 @@ About
 (WARNING WIP) A re-implementation of a BlueSyncLine's ch32v003 arduino flasher in pure
 Arduino INO, with less assembler specific to a particular platform.
 
+Status
+======
+
+It is detecting now the chip, but sometimes unstable (see this issue https://github.com/cnlohr/ch32fun/issues/629):
+
+```
++ ../../ch32fun//../minichlink/minichlink -C ardulink -c /dev/ttyACM0 -i
+Opening serial port /dev/ttyACM0 at 115200 baud.
+Ardulink: synced.
+Ardulink: target power 1
+Interface Setup
+Detected CH32V003
+Flash Storage: 16 kB
+Part UUID: 08-d7-ab-cd-71-0d-bc-69
+Part Type: ff-ff-ff-ff
+Read protection: disabled
+USER/RDPR  : 0005/0000
+DATA1/DATA0: e817/5aa5
+WRPR1/WRPR0: 00ff/00ff
+WRPR3/WRPR2: 00ff/00ff
+R32_ESIG_UNIID1: 08d7abcd
+R32_ESIG_UNIID2: 710dbc69
+R32_ESIG_UNIID3: 00050000
+```
+But sometimes it throws an error ```Fault on op (DMABSTRACTS = 08000302) (100) (Exception executing Abstract Command) DMSTATUS: 004c0382```:
+
+```
+$ ./info.sh 
++ ../../ch32fun//../minichlink/minichlink -C ardulink -c /dev/ttyACM0 -i
+Opening serial port /dev/ttyACM0 at 115200 baud.
+Ardulink: synced.
+Ardulink: target power 1
+Interface Setup
+Fault on op (DMABSTRACTS = 08000302) (100) (Exception executing Abstract Command) DMSTATUS: 004c0382
+Detected CH32V003
+Flash Storage: 16 kB
+Part UUID: 08-d7-ab-cd-00-02-00-3f
+Part Type: 00-32-05-00
+Read protection: disabled
+USER/RDPR  : 0005/0000
+DATA1/DATA0: ff00/ff00
+WRPR1/WRPR0: 00ff/00ff
+WRPR3/WRPR2: 00ff/00ff
+R32_ESIG_UNIID1: 08d7abcd
+R32_ESIG_UNIID2: 00050000
+R32_ESIG_UNIID3: 00050000
+```
+
 Tested microcontrollers
 =======================
 
-Put a list of tested UCs here.
+Arduino UNO (328p)
 
 Wiring
 ======
@@ -20,7 +68,7 @@ Edit the first 2 lines to change the pin if if does not work for your board.
 Todo
 ====
 
-0. Document how to install arduino-cli
+0. Document how to install arduino-cli (esp32 and others)
 1. Document a little bit more the protocol (250ns blocks)
 2. example register to validate we can communicate with the ch32v003 (which one?)
 3. Document Arduino cli compilation and flashing (no IDE)
