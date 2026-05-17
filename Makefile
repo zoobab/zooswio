@@ -22,13 +22,6 @@ LIBRARY = digitalWriteFast
 # Default target
 all: build upload
 
-# Check if the library is installed
-lib:
-	@echo "=================================================================="
-	@echo "Installing library $(LIBRARY) ..."
-	@echo "=================================================================="
-	$(ARDUINO_CLI) lib install $(LIBRARY)
-
 # Build target
 build: $(SKETCH)
 	@echo "=================================================================="
