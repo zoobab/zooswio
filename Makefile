@@ -1,13 +1,15 @@
 # Arduino CLI Makefile
 # Ensure you have arduino-cli installed and configured
+# RP2040 board support: https://github.com/earlephilhower/arduino-pico
+#   arduino-cli core install rp2040:rp2040
 
 # Specify the Arduino CLI executable path
 ARDUINO_CLI = arduino-cli
 
 # Set the Arduino board type and port
-#BOARD = arduino:avr:uno  # Change this to your Arduino board type
-BOARD = esp32:esp32:esp32	# Change this to your Arduino board type
-#BOARD = esp8266:esp8266:d1_mini  # Change this to your Arduino board type
+BOARD = rp2040:rp2040:generic
+#BOARD = rp2040:rp2040:rp2040    # generic RP2040
+#BOARD = rp2040:rp2040:adafruit-feather-rp2040
 PORT = /dev/ttyACM0            # Change this to your connected port
 
 # Specify your sketch name
@@ -15,9 +17,6 @@ SKETCH = zooswio.ino
 
 # Build directory
 BUILD_DIR = build
-
-# Library to check and install
-LIBRARY = digitalWriteFast
 
 # Default target
 all: build upload
